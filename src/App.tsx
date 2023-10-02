@@ -5,13 +5,14 @@ import {
   CssBaseline,
   Grid,
   Link,
-  TextField,
   Typography,
 } from "@mui/material";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { useRef, useState } from "react";
+import InputMask from "react-input-mask";
 
 interface FormValues {
   name: string;
@@ -27,7 +28,11 @@ const validationSchema = Yup.object({
   email: Yup.string().email("Email inválido").required("Obrigatório"),
 });
 function App() {
+  const [isLoading, setIsLoading] = useState(false);
+  const nameRef = useRef<HTMLInputElement>(null);
+
   const handleSubmit = async ({ name, email, cpf, dateBirth }: FormValues) => {
+    setIsLoading(true);
     const url = "https://eo30cgfy4mgd912.m.pipedream.net";
     try {
       await axios({
@@ -42,8 +47,9 @@ function App() {
       });
       alert("Enviado com sucesso!");
     } catch (error) {
-      console.log(error);
       alert("Algum erro aconteceu...");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -59,8 +65,10 @@ function App() {
         validationSchema={validationSchema}
         validateOnBlur={true}
         validateOnChange={false}
-        onSubmit={(values) => {
-          handleSubmit(values);
+        onSubmit={async (values, actions) => {
+          await handleSubmit(values);
+          actions.resetForm();
+          nameRef.current?.focus();
         }}
       >
         {({ values, errors, handleChange, handleSubmit }) => (
@@ -78,44 +86,52 @@ function App() {
                 <Typography component="h1" variant="h5">
                   Zul's Project
                 </Typography>
-                <Box sx={{ mt: 1 }}>
+                <div>
                   <>
-                    <TextField
-                      margin="normal"
+                    <input
                       required
-                      fullWidth
-                      label="Nome"
+                      style={{
+                        width: "100%",
+                      }}
+                      placeholder="Nome *"
+                      ref={nameRef}
                       autoFocus
                       onChange={handleChange("name")}
                       value={values.name}
                     />
                     {errors.name ?? null}
-                    <TextField
-                      margin="normal"
+                    <input
                       required
-                      fullWidth
-                      label="Email"
+                      style={{
+                        width: "100%",
+                      }}
+                      placeholder="Email *"
                       autoComplete="email"
                       onChange={handleChange("email")}
                       value={values.email}
                     />
                     {errors.email ?? null}
-                    <TextField
-                      margin="normal"
-                      required
-                      fullWidth
-                      label="CPF"
+
+                    <InputMask
+                      mask="999.999.999.99"
+                      maskChar={null}
+                      placeholder="CPF *"
                       onChange={handleChange("cpf")}
+                      style={{
+                        width: "100%",
+                      }}
                       value={values.cpf}
                     />
                     {errors.cpf ?? null}
-                    <TextField
-                      margin="normal"
-                      required
-                      fullWidth
-                      label="Data de nascimento, ex: 02/10/2023"
+                    <InputMask
+                      mask="99/99/9999"
+                      maskChar={null}
+                      placeholder="Data de nascimento *"
                       onChange={handleChange("dateBirth")}
                       value={values.dateBirth}
+                      style={{
+                        width: "100%",
+                      }}
                     />
                     {errors.dateBirth ?? null}
                     <Button
@@ -123,19 +139,26 @@ function App() {
                       fullWidth
                       variant="contained"
                       sx={{ mt: 3, mb: 2 }}
+                      disabled={isLoading}
                       onClick={() => handleSubmit()}
                     >
-                      Enviar
+                      {isLoading ? "Enviando..." : "Enviar"}
                     </Button>
+                    <p>
+                      Click no link abaixo para ter mais detalhes sobre o projeto.
+                    </p>
                     <Grid container>
                       <Grid item xs>
-                        <Link href="#" variant="body2">
+                        <Link
+                          href="https://github.com/iCarlosAugusto/ZulProjectFront"
+                          variant="body2"
+                        >
                           Github
                         </Link>
                       </Grid>
                     </Grid>
                   </>
-                </Box>
+                </div>
               </Box>
             </Container>
           </>
