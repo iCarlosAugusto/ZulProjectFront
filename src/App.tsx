@@ -33,7 +33,7 @@ function App() {
 
   const handleSubmit = async ({ name, email, cpf, dateBirth }: FormValues) => {
     setIsLoading(true);
-    const url = "https://eo30cgfy4mgd912.m.pipedream.net";
+    const url = "https://eolj2m7l9zynk5t.m.pipedream.net";
     try {
       await axios({
         method: "POST",
