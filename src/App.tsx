@@ -28,10 +28,11 @@ const validationSchema = Yup.object({
 });
 function App() {
   const handleSubmit = async ({ name, email, cpf, dateBirth }: FormValues) => {
+    const url = "https://eo30cgfy4mgd912.m.pipedream.net";
     try {
       await axios({
         method: "POST",
-        url: "https://eo30cgfy4mgd912.m.pipedream.net",
+        url,
         data: {
           name,
           email,
@@ -56,7 +57,7 @@ function App() {
           dateBirth: "",
         }}
         validationSchema={validationSchema}
-        validateOnBlur={false}
+        validateOnBlur={true}
         validateOnChange={false}
         onSubmit={(values) => {
           handleSubmit(values);
@@ -95,7 +96,6 @@ function App() {
                       fullWidth
                       label="Email"
                       autoComplete="email"
-                      autoFocus
                       onChange={handleChange("email")}
                       value={values.email}
                     />
@@ -105,7 +105,6 @@ function App() {
                       required
                       fullWidth
                       label="CPF"
-                      autoFocus
                       onChange={handleChange("cpf")}
                       value={values.cpf}
                     />
@@ -114,8 +113,7 @@ function App() {
                       margin="normal"
                       required
                       fullWidth
-                      label="Data de nascimento"
-                      autoFocus
+                      label="Data de nascimento, ex: 02/10/2023"
                       onChange={handleChange("dateBirth")}
                       value={values.dateBirth}
                     />
